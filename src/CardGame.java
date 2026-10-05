@@ -43,7 +43,8 @@ public class CardGame {
         //creates the players 
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(i + 1, decks[i], decks[(i + 1)], gameState, outputDir);
+            players[i] = new Player(i + 1, decks[i], decks[(i + 1) % numPlayers], gameState, outputDir);
+            // fixed: added % numPlayers so the last player wraps round to deck 1 (it was running off the end of the array)
 
         }
         // when someone wins, wake up all the decks so no player thread
@@ -63,7 +64,8 @@ public class CardGame {
     private void dealCards() {
         // deal to players
         for (int i = 0; i < 4 * numPlayers; i++) {
-            players[i % 4].addCard(pack.get(i));
+            players[i % numPlayers].addCard(pack.get(i));
+            // fixed: was i % 4, it needs to be i % numPlayers so every player gets cards, one at a time
         }
 
         //deal to decks
@@ -81,15 +83,6 @@ public class CardGame {
         }
     }
 
-    for (CardDeck deck : decks) {
-    try {
-        deck.writeFinalContents(outputDir);
-    } catch (IOException e) {
-        System.out.println("couldn't write the file for deck " + deck.getId());
-    }
-}
-
-
     /**
      * runs the game, starts a thread for each player and waits for them all to finish.
      * the players write their own output files, this writes the deck ones at the end.
@@ -101,7 +94,8 @@ public class CardGame {
         }
 
         for (Thread thread : threads) {
-            thread.run();
+            thread.start();
+            // fixed: was thread.run(), which doesn't make a new thread so the players would play one after another
         }
 
         // wait for every player to finish before moving on
@@ -116,7 +110,15 @@ public class CardGame {
 
         System.out.println("player " + gameState.getWinner() + " wins");
 
-
+        // fixed: this loop was sitting outside of any method (a compile error), moved it here
+        // so the deck files are written after all the players have finished
+        for (CardDeck deck : decks) {
+            try {
+                deck.writeFinalContents(outputDir);
+            } catch (IOException e) {
+                System.out.println("couldn't write the file for deck " + deck.getId());
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -138,7 +140,8 @@ public class CardGame {
             String line = nextLine(scanner);
             try {
                 int n = Integer.parseInt(line.trim());
-                if (n >= 0) {
+                if (n > 0) {
+                    // fixed: was n >= 0 which let 0 players through
                     return n;
                 }
             } catch (NumberFormatException e) {
@@ -152,7 +155,8 @@ public class CardGame {
     static List<Card> readPack(Scanner scanner, java.io.PrintStream out, int numPlayers) {
         while (true) {
             out.println("Please enter location of pack to load:");
-            String line = nextLine(scanner);
+            String line = nextLine(scanner).trim();
+            // fixed: added .trim() so spaces typed after the file name don't make it 'not found'
             try {
                 return Pack.load(Paths.get(line), numPlayers);
             } catch (InvalidPackException e) {
