@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class CardGame {
      */
 
     public CardGame(int numPlayers, List<Card> pack, Path outputDir) {
-        this.numPlayers = numPlayer;
+        this.numPlayers = numPlayers;
         this.pack = pack;
         this.gameState = new GameState();
 
@@ -39,7 +40,7 @@ public class CardGame {
         //creates the players 
         this.players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(i + 1, decks[i], decks([i+1) % numPlayers],gameState);
+            players[i] = new Player(i + 1, decks[i], decks[(i + 1) % numPlayers],gameState);
 
         }
         // deals the cards
@@ -69,7 +70,7 @@ public class CardGame {
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(system.in);
+        Scanner scanner = new Scanner(System.in);
 
         int numPlayers = readPlayerCount(scanner, System.out);
 

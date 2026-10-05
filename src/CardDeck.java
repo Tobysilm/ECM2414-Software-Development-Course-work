@@ -39,7 +39,7 @@ public class CardDeck {
      */
     public synchronized void addToBottom(Card card) {
         cards.add(card);
-        notifyall(); // wake up any thread waiting in drawFromTop()
+        notifyAll(); // wake up any thread waiting in drawFromTop()
     }
 
     /**
@@ -52,12 +52,12 @@ public class CardDeck {
      * @throws InterruptedExeption if the thread is interrupted while waiting 
      */
 
-    public synchronized boolean awaitCard(GameState GameState) throws InterruptedException {
+    public synchronized boolean awaitCard(GameState gameState) throws InterruptedException {
         // using while loop, not if, to handle spurious wakeups
-        while (cards.isEmpty() && !GameState.isOver()) {
+        while (cards.isEmpty() && !gameState.isOver()) {
             wait(); // Release lock and wait for notification
         }
-        return !GameState.isOver();
+        return !gameState.isOver();
     }
     
     /**
@@ -66,7 +66,7 @@ public class CardDeck {
      * synchs to be thread safe
      */
     public synchronized void wakeAll() {
-        notifyall();
+        notifyAll();
     }
     
     /**
@@ -88,7 +88,7 @@ public class CardDeck {
      * @return a list of cards in FIFO order
      */
 
-    public synchronized java.util.List<Card> geCards() {
+    public synchronized java.util.List<Card> getCards() {
         return new java.util.ArrayList<>(cards);
     }
 
