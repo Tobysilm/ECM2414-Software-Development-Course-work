@@ -89,6 +89,16 @@ public class CardGame {
      */
     public void play() {
         Thread[] threads = new Thread[numPlayers];
+
+        // if someone was dealt four of a kind they win straight away,
+        // this is checked before any thread starts so nobody takes a turn first
+        for (Player player : players) {
+            if (player.hasWinningHand()) {
+                gameState.declareWinner(player.getId());
+                break;
+            }
+        }
+
         for (int i = 0; i < numPlayers; i++) {
             threads[i] = new Thread(players[i]);
         }
