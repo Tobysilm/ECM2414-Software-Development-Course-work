@@ -1,40 +1,48 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-//shared by all of the player threads, checks whether the game is over and who won
-//if two players win at the same time, the first one wins
+// shared by all the player threads, keeps track of wether someone has won
 public class GameState {
 
-    private static final int NO_WINNER = 0;
+    // 0 means nobody has won yet, otherwise it's the winning player's number
+    private int winner = 0;
 
-    private final AtomicInteger winner = new AtomicInteger(NO_WINNER);
-    private final List <runnable>  gameOverListeners = new ArrayList<>();
+    // things to run when the game ends (CardGame uses this to wake up the decks)
+    private final List<Runnable> listeners = new ArrayList<>();
 
-    
-    //when the game is over, onGameOver() is called on all listeners, which wakes up any waiting threads
     public void onGameOver(Runnable listener) {
-        gameOverListeners.add(listener);
+        listeners.add(listener);
     }
 
-    // not called when holding a deck lock as listeners lock every deck to awaken the remaininng players
-    // returns true if the game is over, false otherwise
+    // a player calls this when they get four of a kind
+    // returns true if this player won, false if someone else got there first
     public boolean declareWinner(int playerId) {
-        if (!winner.compareAndSet(NO_WINNER, playerId)) {
-            return false;
+        synchronized (this) {
+            if (winner != 0) {
+                return false;
+            }
+            winner = playerId;
         }
-        for (Runnable listener : gameOverListeners) {
+
+        // run these outside the synchronized block so we never hold this lock and a deck lock at the same time
+
+        for (Runnable listener : listeners) {
             listener.run();
         }
         return true;
     }
 
-    public boolean isOver() {
-        return winner.get() != NO_WINNER;
+    public synchronized boolean isOver() {
+        return winner != 0;
     }
 
-    //returns the winners ID, or 0 if the game is not over
-    public int getWinner() {
-        return winner.get();
+    // returns 0 if nobody has won yet
+    public synchronized int getWinner() {
+        return winner;
     }
 }
+
+//note: an earlier version used an atomicinteger for the winner instead of sychronizing,
+//i switched to int as it made it easier to follow for both myself and toby and it does the
+//same job of checking and setting the winner in one atomic operation. THe listeners run
+//outside the synchronized block so we never hold this lock and a deck lock at the same time.
