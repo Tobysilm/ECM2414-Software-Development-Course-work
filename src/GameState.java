@@ -9,11 +9,11 @@ public class GameState {
     private static final int NO_WINNER = 0;
 
     private final AtomicInteger winner = new AtomicInteger(NO_WINNER);
-    private final List gameOverListeners = new ArrayList<>();
+    private final List <runnable>  gameOverListeners = new ArrayList<>();
 
     
     //when the game is over, onGameOver() is called on all listeners, which wakes up any waiting threads
-    public void onGameOver(listener) {
+    public void onGameOver(Runnable listener) {
         gameOverListeners.add(listener);
     }
 
@@ -23,7 +23,7 @@ public class GameState {
         if (!winner.compareAndSet(NO_WINNER, playerId)) {
             return false;
         }
-        for (listener : gameOverListeners) {
+        for (Runnable listener : gameOverListeners) {
             listener.run();
         }
         return true;
