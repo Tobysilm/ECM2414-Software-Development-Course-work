@@ -39,7 +39,7 @@ public class CardDeck {
      */
     public synchronized void addToBottom(Card card) {
         cards.add(card);
-        notifyall(); // wake up any thread waiting in drawFromTop()
+        notifyAll(); // wake up any thread waiting in drawFromTop()
     }
 
     /**
@@ -49,7 +49,7 @@ public class CardDeck {
      * 
      * @param gameState the current game state (to check if the game is over)
      * @return true if a card was available before timeout, fale if game ended
-     * @throws InterruptedExeption if the thread is interrupted while waiting 
+     * @throws InterruptedException if the thread is interrupted while waiting 
      */
 
     public synchronized boolean awaitCard(GameState GameState) throws InterruptedException {
@@ -66,7 +66,7 @@ public class CardDeck {
      * synchs to be thread safe
      */
     public synchronized void wakeAll() {
-        notifyall();
+        notifyAll();
     }
     
     /**
@@ -88,7 +88,7 @@ public class CardDeck {
      * @return a list of cards in FIFO order
      */
 
-    public synchronized java.util.List<Card> geCards() {
+    public synchronized java.util.List<Card> getCards() {
         return new java.util.ArrayList<>(cards);
     }
 
