@@ -1,5 +1,7 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Represents a deck in the card game.
@@ -52,14 +54,20 @@ public class CardDeck {
      * @throws InterruptedException if the thread is interrupted while waiting 
      */
 
-    public synchronized boolean awaitCard(GameState GameState) throws InterruptedException {
+    public synchronized boolean awaitCard(GameState gameState) throws InterruptedException {
         // using while loop, not if, to handle spurious wakeups
-        while (cards.isEmpty() && !GameState.isOver()) {
+        while (cards.isEmpty() && !gameState.isOver()) {
             wait(); // Release lock and wait for notification
         }
-        return !GameState.isOver();
+        return !gameState.isOver();
     }
     
+    // takes card off top, it doesnt wait so it returns null if the deck is empty, used after awaitCard() returns true
+    public synchronized Card removeFromTop() {
+        return cards.poll();
+    }
+
+
     /**
      * Wakes up all threads waiting for a card in awaitcard()
      * called when the game ends
@@ -90,6 +98,22 @@ public class CardDeck {
 
     public synchronized java.util.List<Card> getCards() {
         return new java.util.ArrayList<>(cards);
+    }
+
+
+    //writes the decks final contents to "deckN_output.txt" in the given directory
+    //example output: "deck1 contents: 2 3 4 5"
+
+      // writes what's left in the deck to deckN_output.txt
+    public synchronized void writeFinalContents(java.nio.file.Path dir) throws IOException {
+        String text = "deck" + id + " contents:";
+        for (Card c : cards) {
+            text = text + " " + c.getvalue();
+        }
+
+        FileWriter writer = new FileWriter(dir.resolve("deck" + id + "_output.txt").toFile());
+        writer.write(text);
+        writer.close();
     }
 
     /** 
