@@ -2,8 +2,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.beans.Test;
-
 public class CardDeckTest {
 
     private CardDeck deck;
@@ -28,7 +26,7 @@ public class CardDeckTest {
         deck.addToBottom(new Card(2));
         assertEquals(2, deck.size(), "empty deck has size 2 after 2 adds");
 
-        deck.drawFromTop();
+        deck.removeFromTop();
         assertEquals(1, deck.size(), "Deck has size 1 after one draw");
     }
 

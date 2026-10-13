@@ -25,7 +25,7 @@ public final class Card {
      * Returns the value of this card.
      * @return the card's value
      */
-    public int getvalue() {
+    public int getValue() {
         return value;
     }
 

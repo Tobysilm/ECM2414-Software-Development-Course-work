@@ -42,7 +42,7 @@ public class Player implements Runnable {
             return false;
         }
         for (Card card : hand) {
-            if (card.getvalue() != hand.get(0).getvalue()) {
+            if (card.getValue() != hand.get(0).getValue()) {
                 return false;
             }
         }
@@ -120,7 +120,7 @@ public class Player implements Runnable {
     private synchronized Card removeCardToDiscard() {
         List<Card> options = new ArrayList<>();
         for (Card card : hand) {
-            if (card.getvalue() != id) {
+            if (card.getValue() != id) {
                 options.add(card);
             }
         }

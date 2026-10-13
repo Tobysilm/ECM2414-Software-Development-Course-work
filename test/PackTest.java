@@ -1,12 +1,6 @@
-package test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import Card;
-import InvalidPackException;
-import Pack;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -86,4 +80,6 @@ public class PackTest {
 
         assertThrows(InvalidPackException.class, () -> {
             Pack.load(file, 1);
-        }, "Pack with non-integer should
+        }, "Pack with non-integer should throw");
+    }
+}

@@ -108,7 +108,7 @@ public class CardDeck {
     public synchronized void writeFinalContents(java.nio.file.Path dir) throws IOException {
         String text = "deck" + id + " contents:";
         for (Card c : cards) {
-            text = text + " " + c.getvalue();
+            text = text + " " + c.getValue();
         }
 
         FileWriter writer = new FileWriter(dir.resolve("deck" + id + "_output.txt").toFile());
@@ -123,6 +123,6 @@ public class CardDeck {
     
     @Override
     public String toString() {
-        return "Deck " + id + " (size:" + size() + ")";
+        return "Deck " + id + " (size: " + size() + ")";
     }
 }
