@@ -51,4 +51,47 @@ public class CardDeckTest {
         assertTrue(str.contains("Deck 1"), "toString should contain deck ID");
         assertTrue(str.contains("size: 1"), "toString should contain size");
     }
+
+        @Test
+    public void testNewDeckIsEmpty() {
+        assertEquals(0, deck.size());
+        assertNull(deck.removeFromTop());
+    }
+
+    @Test
+    public void testCardsComeOutInTheOrderTheyWentIn() {
+        Card first = new Card(1);
+        Card second = new Card(2);
+        Card third = new Card(3);
+
+        deck.addToBottom(first);
+        deck.addToBottom(second);
+        deck.addToBottom(third);
+
+        assertEquals(third, deck.removeFromTop());
+        assertEquals(second, deck.removeFromTop());
+        assertEquals(first, deck.removeFromTop());
+        assertNull(deck.removeFromTop());
+    }
+
+    // a thread that adds 1000 cards to the deck
+    private class Adder extends Thread {
+        public void run() {
+            for (int i = 0; i < 1000; i++) {
+                deck.addToBottom(new Card(i - 1));
+            }
+        }
+    }
+
+    @Test
+    public void testNoCardsLostWhenThreadsAddAtTheSameTime() throws InterruptedException {
+        Adder[] adders = new Adder[3];
+
+        for (int i = 0; i < 3; i++) {
+            adders[i] = new Adder();
+            adders[i].start();
+        }
+
+        assertEquals(4000, deck.size());
+    }
 }
