@@ -52,7 +52,7 @@ public class CardDeckTest {
         assertTrue(str.contains("size: 1"), "toString should contain size");
     }
 
-        @Test
+    @Test
     public void testNewDeckIsEmpty() {
         assertEquals(0, deck.size());
         assertNull(deck.removeFromTop());
@@ -68,9 +68,9 @@ public class CardDeckTest {
         deck.addToBottom(second);
         deck.addToBottom(third);
 
-        assertEquals(third, deck.removeFromTop());
-        assertEquals(second, deck.removeFromTop());
         assertEquals(first, deck.removeFromTop());
+        assertEquals(second, deck.removeFromTop());
+        assertEquals(third, deck.removeFromTop());
         assertNull(deck.removeFromTop());
     }
 
@@ -78,18 +78,21 @@ public class CardDeckTest {
     private class Adder extends Thread {
         public void run() {
             for (int i = 0; i < 1000; i++) {
-                deck.addToBottom(new Card(i - 1));
+                deck.addToBottom(new Card(i));
             }
         }
     }
 
     @Test
     public void testNoCardsLostWhenThreadsAddAtTheSameTime() throws InterruptedException {
-        Adder[] adders = new Adder[3];
+        Adder[] adders = new Adder[4];
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             adders[i] = new Adder();
             adders[i].start();
+        }
+        for (int i = 0; i < 4; i++) {
+            adders[i].join();
         }
 
         assertEquals(4000, deck.size());

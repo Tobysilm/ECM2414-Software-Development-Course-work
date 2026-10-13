@@ -89,8 +89,8 @@ public class PackTest {
     }
 
     @Test
-    public void testMissingFileIsInvalid() throws Exception {
-        Path file = writeFile("missing.txt", "1\n2\n3\n4\n5\n6\n7\n8\n");
+    public void testMissingFileIsInvalid() {
+        Path file = tempDir.resolve("missing.txt");   // never created
 
         assertThrows(InvalidPackException.class, () -> {
             Pack.load(file, 1);
@@ -99,7 +99,7 @@ public class PackTest {
 
     @Test
     public void testZeroValuesAreAllowed() throws Exception {
-        Path file = writeFile("zeros.txt", "0\n0\n0\n0\n0\n0\n0\n");
+        Path file = writeFile("zeros.txt", "0\n0\n0\n0\n0\n0\n0\n0\n");
 
         List<Card> cards = Pack.load(file, 1);
 
@@ -113,7 +113,7 @@ public class PackTest {
         List<Card> cards = Pack.load(file, 1);
 
         assertEquals(100, cards.get(0).getValue());
-        assertEquals(800, cards.get(8).getValue());
+        assertEquals(800, cards.get(7).getValue());
     }
 
     @Test
@@ -122,24 +122,22 @@ public class PackTest {
 
         List<Card> cards = Pack.load(file, 1);
 
-        assertEquals(1, cards.get(0).getValue());
-        assertEquals(8, cards.get(7).getValue());
+        assertEquals(8, cards.get(0).getValue());
+        assertEquals(1, cards.get(7).getValue());
     }
 
     @Test
     public void testBlankLineIsInvalid() throws Exception {
         Path file = writeFile("blank.txt", "1\n2\n\n4\n5\n6\n7\n8\n");
 
-        try {
+        assertThrows(InvalidPackException.class, () -> {
             Pack.load(file, 1);
-        } catch (InvalidPackException e) {
-            assertTrue(true);
-        }
+        });
     }
 
     @Test
     public void testZeroPlayersIsInvalid() throws Exception {
-        Path file = writeFile("four.txt", "1\n2\n3\n4\n");
+        Path file = createValidPack(1);   // a good pack, so 0 players is the only problem
 
         assertThrows(InvalidPackException.class, () -> {
             Pack.load(file, 0);
