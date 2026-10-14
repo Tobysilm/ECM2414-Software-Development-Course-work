@@ -19,6 +19,7 @@ public class CardGameTest {
     Path tempDir;
 
     // helpers
+
     private List<Card> cards(int... values) {
         List<Card> list = new ArrayList<>();
         for (int value : values) {
@@ -65,10 +66,9 @@ public class CardGameTest {
         return numbersIn(line.substring(line.indexOf(':') + 1));
     }
 
-    // ---------- dealing and winning straight away ----------
-
-    // player 1 is dealt cards 0, 2, 4 and 6 of the pack, and player 2 gets 1, 3, 5 and 7
-    // the decks then get the rest, one card at a time, starting with deck 1
+    //dealing and winning straight away 
+    // player 1 is dealt cards 1, 2, 1, 3 and wins straight away with four 1s
+    // the decks then get the remaining cards 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     @Test
     public void testCardsAreDealtRoundRobinAndPlayerWinsStraightAway() throws Exception {
         List<Card> pack = cards(1, 2, 1, 3, 1, 4, 1, 5,
@@ -102,7 +102,7 @@ public class CardGameTest {
         assertEquals(4, readLines(tempDir, "player1_output.txt").size());
     }
 
-    // ---------- whole games ----------
+    // whole games
 
     @Test
     public void testGameWritesTwoFilesForEachPlayer() throws Exception {
@@ -149,7 +149,7 @@ public class CardGameTest {
     // looks at every draw, discard and hand line in one player's file
     private void checkTurns(Path folder, int player, int n) throws Exception {
         List<String> lines = readLines(folder, "player" + player + "_output.txt");
-        int deckOnTheRight = player + 1;
+        int deckOnTheRight = (player % n) + 1;
         String start = "player " + player;
 
         assertTrue(lines.get(0).startsWith(start + " initial hand "));
@@ -213,7 +213,7 @@ public class CardGameTest {
     private void checkNoCardsLost(Path folder, List<Card> pack, int n) throws Exception {
         List<Integer> cardsAtEnd = new ArrayList<>();
 
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i <= n; i++) {
             List<String> playerLines = readLines(folder, "player" + i + "_output.txt");
             cardsAtEnd.addAll(numbersAfterColon(playerLines.get(playerLines.size() - 1)));
 
@@ -231,7 +231,7 @@ public class CardGameTest {
         assertEquals(cardsAtStart, cardsAtEnd);
     }
 
-    // ---------- typing in the player count and the pack ----------
+    // typing in the player count and pack file name, and checking the right number of players and cards are read
 
     @Test
     public void testBadPlayerCountsAreAskedAgain() {
