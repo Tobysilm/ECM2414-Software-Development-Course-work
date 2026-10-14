@@ -67,8 +67,8 @@ public class CardGameTest {
     }
 
     //dealing and winning straight away 
-    // player 1 is dealt cards 1, 2, 1, 3 and wins straight away with four 1s
-    // the decks then get the remaining cards 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+    // player 1 is dealt cards 0, 2, 4 and 6 of the pack, and player 2 gets 1, 3, 5 and 7
+    // the decks then get the rest, one card at a time, starting with deck 1
     @Test
     public void testCardsAreDealtRoundRobinAndPlayerWinsStraightAway() throws Exception {
         List<Card> pack = cards(1, 2, 1, 3, 1, 4, 1, 5,
