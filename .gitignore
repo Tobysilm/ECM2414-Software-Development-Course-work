@@ -25,3 +25,7 @@ replay_pid*
 
 
 *_output.txt
+
+build/
+cardsTest/
+MANIFEST.MF
