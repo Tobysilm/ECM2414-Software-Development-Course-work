@@ -41,8 +41,3 @@ public class GameState {
         return winner;
     }
 }
-
-//note: an earlier version used an atomicinteger for the winner instead of sychronizing,
-//i switched to int as it made it easier to follow for both myself and toby and it does the
-//same job of checking and setting the winner in one atomic operation. THe listeners run
-//outside the synchronized block so we never hold this lock and a deck lock at the same time.
